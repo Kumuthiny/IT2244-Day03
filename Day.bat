@@ -1,14 +1,20 @@
 @echo off
-::outputs the day
-echo %day%
-set /a year = %date:~10,4%
-set /a month = %date:~4,2%
-set /a day= %date:~7,2%
-set weekday = %date:~0,3%
+:: Get date using WMIC for consistent format (yyyy-MM-dd)
+for /f "tokens=2 delims==" %%I in ('"wmic os get LocalDateTime /value"') do set datetime=%%I
 
-echo year %year%
-echo month %month%
-echo day %day%
-echo weekday %weekday%
+:: Extract parts from the datetime string
+:: Format: yyyyMMddhhmmss.ssssss±UUU
+set year=%datetime:~0,4%
+set month=%datetime:~4,2%
+set day=%datetime:~6,2%
+
+:: Get weekday name
+for /f %%A in ('powershell -command "(Get-Date).DayOfWeek"') do set weekday=%%A
+
+:: Display results
+echo Year: %year%
+echo Month: %month%
+echo Day: %day%
+echo Weekday: %weekday%
 
 pause
